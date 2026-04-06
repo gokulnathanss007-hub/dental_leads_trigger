@@ -7,7 +7,7 @@ services:
     branch: main
     autoDeploy: true         # redeploy on every push to main
 
-    buildCommand: npm install --include=dev && npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm start
 
     healthCheckPath: /health
@@ -58,5 +58,4 @@ services:
       # ── Optional ─────────────────────────────────────────────
       - key: LOG_LEVEL
         value: info          # debug | info | warn | error
-      - key: PORT
-        value: 3000
+      # PORT is injected automatically by Render (10000) — do NOT override it here.
