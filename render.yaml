@@ -32,12 +32,31 @@ services:
       # ── ClickUp ──────────────────────────────────────────────
       - key: CLICKUP_API_KEY
         sync: false
+      - key: CLICKUP_LIST_ID
+        sync: false
+
+      # ── NVIDIA LLaMA ─────────────────────────────────────────
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: NVIDIA_BASE_URL
+        sync: false
+      - key: NVIDIA_MODEL
+        sync: false
+
+      # ── Clinic context ────────────────────────────────────────
+      - key: CLINIC_NAME
+        sync: false
+      - key: CLINIC_SERVICES
+        sync: false
+      - key: CLINIC_HOURS
+        sync: false
 
       # ── Trigger.dev ──────────────────────────────────────────
-      # Required if your server.ts calls webhookHandler.trigger()
       - key: TRIGGER_SECRET_KEY
         sync: false
 
       # ── Optional ─────────────────────────────────────────────
       - key: LOG_LEVEL
         value: info          # debug | info | warn | error
+      - key: PORT
+        value: 3000
