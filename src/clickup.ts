@@ -15,7 +15,7 @@
 // ============================================================
 
 import axios, { type AxiosInstance, type AxiosError } from "axios";
-import { logger } from "./utils/logger.js";
+import { logger } from "@trigger.dev/sdk";
 
 // ── Custom Field IDs ─────────────────────────────────────────────────────────
 // Source list: "Dental Leadd" (space 90166718340, list 901614338320)
