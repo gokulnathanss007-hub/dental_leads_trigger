@@ -81,7 +81,11 @@ function validateTwilioSignature(
   next();
 }
 
-// ── Health check ──────────────────────────────────────────────────────────────
+// ── Health checks ─────────────────────────────────────────────────────────────
+
+app.get("/", (_req: Request, res: Response) => {
+  res.send("Server is running");
+});
 
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", ts: new Date().toISOString() });
@@ -147,9 +151,30 @@ app.post(
   }
 );
 
+// ── Global error handler ──────────────────────────────────────────────────────
+
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  logger.error({ err }, "Unhandled error");
+  res.status(500).json({ error: "Internal server error" });
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 
 app.listen(PORT, () => {
   logger.info({ port: PORT }, "Server listening");
   logger.info(`Twilio webhook endpoint: POST http://localhost:${PORT}/webhook/whatsapp`);
+
+  // ── Render free-tier keep-alive ──────────────────────────────────────────────
+  // Render's free plan spins the process down after 15 min of inactivity.
+  // Twilio has a 15-second webhook timeout — a cold start causes it to time out
+  // and fall back to any pre-configured sandbox template instead of your bot.
+  // Pinging /health every 14 minutes keeps the process warm.
+  const renderUrl = process.env.RENDER_EXTERNAL_URL;
+  if (renderUrl) {
+    const healthUrl = `${renderUrl}/health`;
+    setInterval(() => {
+      fetch(healthUrl).catch(() => { /* ignore — just keeping the process warm */ });
+    }, 14 * 60 * 1000); // every 14 minutes
+    logger.info({ healthUrl }, "Render keep-alive ping enabled");
+  }
 });
